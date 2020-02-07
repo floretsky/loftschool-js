@@ -61,7 +61,7 @@ function upperProps(obj) {
     const newArray = [];
 
     for (let key in obj) {
-        if ({}.hasOwnProperty.call(obj, key)) {
+        if (obj.hasOwnProperty(key)) {
             newArray.push(key.toUpperCase());
         }
     }
@@ -112,8 +112,8 @@ console.log(slice(array,9999));  */
  */
 function createProxy(obj) {
     let handler = {
-        get: function(target, name) {
-            return target[name]*target[name];
+        set: function(target, name) {
+            return target[name] * target[name];
         }
     };
 
