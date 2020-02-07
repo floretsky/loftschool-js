@@ -1,3 +1,5 @@
+import { Exception } from 'handlebars';
+
 /* ДЗ 3 - работа с исключениями и отладчиком */
 
 /*
@@ -17,6 +19,25 @@
    isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
  */
 function isAllTrue(array, fn) {
+
+    var flag = true;
+
+    if (array.length == 0 || !(array instanceof Array)) {
+        throw new Exception('empty array');
+    }
+
+    if (typeof fn != 'function') {
+        throw new Exception('fn is not a function');
+    }
+        
+    for (let i = 0; i < array.length; i++) {
+        if (!fn(array[i])) {
+            flag = false;
+        }
+    }
+
+    return flag;
+    
 }
 
 /*
@@ -36,12 +57,29 @@ function isAllTrue(array, fn) {
    isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
 function isSomeTrue(array, fn) {
+    var flag = false;
+
+    if (array.length == 0 || !(array instanceof Array)) {
+        throw new Exception('empty array');
+    }
+        
+    if (typeof fn != 'function') {
+        throw new Exception('fn is not a function');
+    }
+        
+    for (let i = 0; i < array.length; i++) {
+        if (fn(array[i])) {
+            flag = true;
+        }
+    }
+
+    return flag;
 }
 
 /*
  Задание 3:
 
- 3.1: Функция принимает заранее неизветсное количество аргументов, первым из которых является функция fn
+ 3.1: Функция принимает заранее неизвестное количество аргументов, первым из которых является функция fn
  Функция должна поочередно запустить fn для каждого переданного аргумента (кроме самой fn)
 
  3.2: Функция должна вернуть массив аргументов, для которых fn выбросила исключение
@@ -49,7 +87,24 @@ function isSomeTrue(array, fn) {
  3.3: Необходимо выбрасывать исключение в случаях:
    - fn не является функцией (с текстом "fn is not a function")
  */
-function returnBadArguments(fn) {
+function returnBadArguments(fn, ...args) {
+
+    const result = [];
+
+    if (typeof fn != 'function') {
+        throw new Exception('fn is not a function');
+    }
+
+    for (let i = 0; i < args.length; i++) {
+        try {
+            fn(args[i]);
+        } catch (e) {
+            result.push(args[i]);
+        }
+
+    }
+
+    return result;
 }
 
 /*
@@ -69,7 +124,52 @@ function returnBadArguments(fn) {
    - number не является числом (с текстом "number is not a number")
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
-function calculator() {
+function calculator(number = 0) {
+
+    if (isNaN(number)) {
+        throw new Exception('number is not a number');
+    }
+
+    var obj = {};
+
+    obj.sum = function() {
+        for (let i = 0; i < arguments.length; i++) {
+            number += arguments[i];
+        }
+
+        return number;
+    }; 
+
+    obj.dif = function() {
+        for (let i = 0; i < arguments.length; i++) {
+            number -= arguments[i];
+        }
+
+        return number;
+    }; 
+
+    obj.div = function() {
+        for (let i = 0; i < arguments.length; i++) {
+            if (arguments[i] == 0) {
+                throw new Exception('division by 0');
+            }
+
+            number /= arguments[i];
+        }
+
+        return number;
+    };
+
+    obj.mul = function() {
+        for (let i = 0; i < arguments.length; i++) {
+            number *= arguments[i];
+        }
+
+        return number;
+    };
+
+    return obj;
+
 }
 
 /* При решении задач, пострайтесь использовать отладчик */
