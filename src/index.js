@@ -12,7 +12,9 @@
  */
 function createDivWithText(text) {
     const newElement = document.createElement('div');
+
     newElement.innerText = text;
+    
     return newElement;
 }
 
@@ -25,7 +27,7 @@ function createDivWithText(text) {
    prepend(document.querySelector('#one'), document.querySelector('#two')) // добавит элемент переданный первым аргументом в начало элемента переданного вторым аргументом
  */
 function prepend(what, where) {
-    where.insertBefore(what, where.firstChild);
+    where.prepend(what);
 }
 
 /*
@@ -49,12 +51,10 @@ function prepend(what, where) {
  */
 function findAllPSiblings(where) {
     const result = [], 
-        children = where.children;
+        children = where.querySelectorAll('p');
 
-    for (let i = 0; i < children.length - 1; i++) {
-        if (children[i].nextElementSibling.nodeName === 'P' ) {
-            result.push(children[i]);
-        }
+    for (let i = 0; i < children.length; i++) {
+        result.push(children[i].previousElementSibling);
     }
 
     return result;
