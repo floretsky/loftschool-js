@@ -9,7 +9,7 @@
 
 /*
  homeworkContainer - это контейнер для всех ваших домашних заданий
- Если вы создаете новые html-элементы и добавляете их на страницу, то дабавляйте их только в этот контейнер
+ Если вы создаете новые html-элементы и добавляете их на страницу, то добавляйте их только в этот контейнер
 
  Пример:
    const newDiv = document.createElement('div');
@@ -27,6 +27,23 @@ const homeworkContainer = document.querySelector('#homework-container');
    homeworkContainer.appendChild(newDiv);
  */
 function createDiv() {
+    const newDiv = document.createElement('div'),
+        randomColor = Math.floor(Math.random()*16777215).toString(16),
+        randomWidth = Math.random() * 101,
+        randomHeight = Math.random() * 101,
+        top = Math.random() * 101,
+        left = Math.random() * 101;
+
+    newDiv.classList.add('draggable-div');
+    newDiv.style.background = `#${randomColor}`;
+    newDiv.style.width = `${randomWidth}%`;
+    newDiv.style.height = `${randomHeight}%`;
+    newDiv.style.position = 'absolute';
+    newDiv.style.top = `${top}%`;
+    newDiv.style.left = `${left}%`;
+    newDiv.draggable = true;
+
+    return newDiv;
 }
 
 /*
@@ -38,6 +55,19 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+    target.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+    })
+
+    target.addEventListener('dragover', (e) => {
+        e.preventDefault();
+    })
+
+    target.addEventListener('drop', (e) => {
+        e.preventDefault();
+    })
+
+    // dragenter, dragleave, drag, dragend по аналогии? 
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
