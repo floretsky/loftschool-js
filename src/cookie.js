@@ -43,10 +43,67 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
+function getCookies() {
+    const allCookies = document.cookie.split(";"), fragment = document.createDocumentFragment();
+
+    listTable.innerHTML = "";
+
+    for (const cookie of allCookies) {
+
+        const cookieName = cookie.substr(0, cookie.indexOf("=")),
+            cookieValue = cookie.substr(cookie.indexOf("=") + 1);
+
+        if (isMatching(cookieName, filterNameInput.value) || isMatching(cookieValue, filterNameInput.value)) {
+
+            const tableRow = document.createElement('tr');
+
+            tableRow.innerHTML = `<td>${cookieName}</td>
+                <td>${cookieValue}</td>
+                <td><button class='delete-cookie'>X</button></td>`;
+
+            fragment.appendChild(tableRow);
+        }
+    }
+
+    listTable.appendChild(fragment);
+
+}
+
+getCookies();
+
+function isMatching(full, chunk) {
+    const regex = new RegExp(chunk, 'i');
+
+    return (full.search(regex) !== -1);
+}
+
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    getCookies();
 });
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
+    
+    const nameValue = addNameInput.value,
+        cookieValue = addValueInput.value;
+    
+    const exdate = new Date();
+    exdate.setDate(exdate.getDate() + 10);
+
+    if (nameValue !== '' && cookieValue !== '') {
+        document.cookie = `${nameValue}=${(cookieValue || '')}; path=/; expires=${exdate.toUTCString()}`;
+    }
+    
+    getCookies();
+    
+});
+
+listTable.addEventListener('click', (e) => {
+    if (e.target.classList.contains('delete-cookie')) {
+        const cookieName = e.target.parentElement.parentElement.firstElementChild.textContent.trim();
+
+        document.cookie = `${cookieName}=; path=/; expires = Thu, 01 Jan 1970 00:00:00 GMT`;
+        e.target.closest('tr').remove();
+    }
 });
