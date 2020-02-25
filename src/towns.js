@@ -37,6 +37,26 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    return new Promise(function (resolve) {
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+        xhr.responseType = 'json';
+        xhr.addEventListener('load', () => {
+            resolve(xhr.response.sort(function (a, b) {
+                if (a.name > b.name) {
+                    return 1;
+                } else if (a.name < b.name) {
+                    return -1;
+                }
+
+                return 0;
+            }));
+
+        });
+        
+        xhr.send();
+    });
 }
 
 /*
@@ -51,6 +71,9 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    const regex = new RegExp(chunk, 'i');
+
+    return (full.search(regex) !== -1);
 }
 
 /* Блок с надписью "Загрузка" */
@@ -61,9 +84,45 @@ const filterBlock = homeworkContainer.querySelector('#filter-block');
 const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
+/* Массив городов */
+let cities = [];
+
+function addCities(arr) {
+    const fragment = document.createDocumentFragment();
+
+    for (const city of arr) {
+        if (filterInput.value.length !== 0 && isMatching(city.name, filterInput.value)) {
+            const block = document.createElement('div');
+
+            block.innerText = city.name;
+            fragment.appendChild(block);
+        }
+    }
+
+    filterResult.prepend(fragment);
+}
+
+(function load() {
+    loadTowns().then(data => {
+        cities = data;
+
+        loadingBlock.style.display = 'none';
+        filterBlock.style.display = 'block';
+    }).catch(() => {
+        loadingBlock.innerText = 'Не удалось загрузить города';
+        const button = document.createElement('button');
+
+        button.innerText = 'Повторить';
+        button.addEventListener('click', load);
+        homeworkContainer.appendChild(button);
+    });
+})();
 
 filterInput.addEventListener('keyup', function() {
     // это обработчик нажатия кливиш в текстовом поле
+    filterResult.innerHTML = '';
+    
+    addCities(cities);
 });
 
 export {
