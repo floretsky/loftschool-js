@@ -62,6 +62,7 @@ function addListeners(target) {
         var style = window.getComputedStyle(e.target, null);
         e.dataTransfer.setData("text/plain",
         (parseInt(style.getPropertyValue("left"),10) - e.clientX) + ',' + (parseInt(style.getPropertyValue("top"),10) - e.clientY));
+        e.target.id = 'active';
     })
 
     document.body.addEventListener('dragover', (e) => {
@@ -70,9 +71,12 @@ function addListeners(target) {
 
     document.body.addEventListener('drop', (e) => {
         var offset = e.dataTransfer.getData("text/plain").split(',');
-        var dm = document.querySelector('.draggable-div');
-        dm.style.left = (e.clientX + parseInt(offset[0],10)) + 'px';
-        dm.style.top = (e.clientY + parseInt(offset[1],10)) + 'px';
+        var dm = document.querySelector('#active');
+        if (dm) {
+            dm.style.left = (e.clientX + parseInt(offset[0],10)) + 'px';
+            dm.style.top = (e.clientY + parseInt(offset[1],10)) + 'px';
+            dm.removeAttribute('id');
+        }
         e.preventDefault();
         return false;
     })
