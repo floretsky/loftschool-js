@@ -17,6 +17,9 @@
  */
 const homeworkContainer = document.querySelector('#homework-container');
 
+homeworkContainer.style.width = '100vw';
+homeworkContainer.style.height = '100vh';
+
 /*
  Функция должна создавать и возвращать новый div с классом draggable-div и случайными размерами/цветом/позицией
  Функция должна только создавать элемент и задвать ему случайные размер/позицию/цвет
@@ -56,18 +59,23 @@ function createDiv() {
  */
 function addListeners(target) {
     target.addEventListener('dragstart', (e) => {
+        var style = window.getComputedStyle(e.target, null);
+        e.dataTransfer.setData("text/plain",
+        (parseInt(style.getPropertyValue("left"),10) - e.clientX) + ',' + (parseInt(style.getPropertyValue("top"),10) - e.clientY));
+    })
+
+    document.body.addEventListener('dragover', (e) => {
         e.preventDefault();
     })
 
-    target.addEventListener('dragover', (e) => {
+    document.body.addEventListener('drop', (e) => {
+        var offset = e.dataTransfer.getData("text/plain").split(',');
+        var dm = document.querySelector('.draggable-div');
+        dm.style.left = (e.clientX + parseInt(offset[0],10)) + 'px';
+        dm.style.top = (e.clientY + parseInt(offset[1],10)) + 'px';
         e.preventDefault();
+        return false;
     })
-
-    target.addEventListener('drop', (e) => {
-        e.preventDefault();
-    })
-
-    // dragenter, dragleave, drag, dragend по аналогии? 
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');

@@ -1,8 +1,8 @@
 let webpack = require('webpack');
 let HtmlPlugin = require('html-webpack-plugin');
-let CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
-let rules = require('./webpack.config.rules')();
+let rules = require('./webpack.config.rules');
 let path = require('path');
 
 rules.push({
@@ -28,18 +28,18 @@ module.exports = {
     devtool: 'source-map',
     module: { rules },
     plugins: [
-        new webpack.optimize.UglifyJsPlugin({
+        /* new webpack.optimize.UglifyJsPlugin({
             sourceMap: true,
             compress: {
                 drop_debugger: false,
                 warnings: false
             }
-        }),
+        }), */
         new ExtractTextPlugin('styles.css'),
         new HtmlPlugin({
             title: 'Main Homework',
-            template: 'main.hbs',
-            chunks: ['main']
+            template: 'index.hbs',
+            chunks: ['index']
         }),
         new HtmlPlugin({
             title: 'Div Drag And Drop',
@@ -47,6 +47,6 @@ module.exports = {
             filename: 'dnd.html',
             chunks: ['dnd']
         }),
-        new CleanWebpackPlugin(['dist'])
+        new CleanWebpackPlugin()
     ]
 };
